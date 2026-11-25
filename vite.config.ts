@@ -27,8 +27,10 @@ export default defineConfig(({ mode }) => {
         '/storage': { target: apiTarget, changeOrigin: true },
       },
     },
+    // Builds to dist/. The locale-drive server repo includes this repo as a submodule and runs
+    // `npm run build -- --outDir ../src/public` to place the build where Express serves it.
     build: {
-      outDir: '../public',
+      outDir: 'dist',
       emptyOutDir: true,
     },
   };
