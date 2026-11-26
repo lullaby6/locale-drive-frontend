@@ -56,6 +56,15 @@ export default () => {
 		initialized.current = true;
 
 		init();
+
+		// The server opens the browser with "?connect" when it starts: show the QR code right away
+		// so another device can scan it. The flag is removed so reloads (and other devices) don't reopen it.
+		const url = new URL(window.location.href);
+		if (url.searchParams.has("connect")) {
+			url.searchParams.delete("connect");
+			window.history.replaceState(null, "", url.pathname + url.search + url.hash);
+			useGlobalStore.getState().openDialog({ kind: "qr" });
+		}
 	}, [init]);
 
 	useEffect(() => {

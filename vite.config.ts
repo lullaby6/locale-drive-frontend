@@ -21,7 +21,8 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       port: parseInt(env.PORT || '3000'),
-      open: true,
+      // "?connect" opens the QR code dialog on start (see App.tsx).
+      open: '/?connect',
       proxy: {
         '/api': { target: apiTarget, changeOrigin: true },
         '/storage': { target: apiTarget, changeOrigin: true },
