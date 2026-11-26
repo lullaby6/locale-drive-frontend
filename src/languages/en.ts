@@ -13,6 +13,7 @@ const en = {
 		downloadAsZip: "Download as .zip",
 		rename: "Rename",
 		duplicate: "Duplicate",
+		move: "Move",
 		delete: "Delete",
 		open: "Open",
 		preview: "Preview",
@@ -40,6 +41,8 @@ const en = {
 	},
 
 	toolbar: {
+		search: "Search",
+		actions: "Actions",
 		searchPlaceholder: "Search in this folder and subfolders...",
 		clearSearch: "Clear search",
 		listLayout: "List layout",
@@ -137,6 +140,16 @@ const en = {
 		duplicateTitle: "Duplicate?",
 		duplicateBody: (name: string) => `A copy of “${name}” will be created in the same folder.`,
 		duplicateFolderHint: "The folder is copied with everything inside it.",
+		moveTitle: (label: string) => `Move ${label}`,
+		moveHere: "Move here",
+		moveNoFolders: "No folders here",
+		moveAlreadyHere: "Already in this folder",
+		moveConfirmTitle: "Confirm move",
+		moveFrom: "From",
+		moveTo: "To",
+		moveSeveralPlaces: "Several locations",
+		moveAndMore: (count: number) => `and ${count} more`,
+		back: "Back",
 		validation: {
 			empty: "Name cannot be empty",
 			tooLong: "Name is too long",

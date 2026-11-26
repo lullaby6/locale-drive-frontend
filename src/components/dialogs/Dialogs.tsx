@@ -7,6 +7,8 @@ import Modal from "@/components/Modal";
 import ClipboardDialog from "@/components/dialogs/ClipboardDialog";
 import NameDialog from "@/components/dialogs/NameDialog";
 import QrDialog from "@/components/dialogs/QrDialog";
+import MoveDialog from "@/components/dialogs/MoveDialog";
+import EntryActionsSheet from "@/components/dialogs/EntryActionsSheet";
 import ShortcutsDialog from "@/components/dialogs/ShortcutsDialog";
 import { useT } from "@/i18n";
 import useGlobalStore from "@/store/global";
@@ -146,6 +148,10 @@ export default (): JSX.Element | null => {
 					onClose={closeDialog}
 				/>
 			);
+		case "move":
+			return <MoveDialog paths={dialog.paths} destination={dialog.destination} onClose={closeDialog} />;
+		case "entryActions":
+			return <EntryActionsSheet entry={dialog.entry} onClose={closeDialog} />;
 		case "duplicate":
 			return <DuplicateDialog entry={dialog.entry} onClose={closeDialog} />;
 		case "delete":

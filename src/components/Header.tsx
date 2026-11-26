@@ -31,6 +31,27 @@ function IconButton({ icon, label, onClick, href, dot = false }: { icon: string;
 	);
 }
 
+/** Same actions as IconButton, styled as part of a full-width button group (phones). */
+function MobileGroupButton({ icon, label, onClick, href, dot = false }: { icon: string; label: string; onClick?: () => void; href?: string; dot?: boolean }) {
+	const className = "btn btn-subtle join-item flex-1 relative";
+	const content = (
+		<>
+			<Icon icon={icon} width="1em" height="1em" className="text-xl" />
+			{dot && <span className="absolute top-2 right-[calc(50%-1rem)] size-2 rounded-full bg-primary" />}
+		</>
+	);
+
+	return href ? (
+		<a href={href} target="_blank" rel="noreferrer" className={className} aria-label={label}>
+			{content}
+		</a>
+	) : (
+		<button onClick={onClick} className={className} aria-label={label}>
+			{content}
+		</button>
+	);
+}
+
 export default (): JSX.Element => {
 	const t = useT();
 	const realPath = useGlobalStore(state => state.realPath);
@@ -59,7 +80,8 @@ export default (): JSX.Element => {
 					</p>
 				</div>
 
-				<div className="flex flex-wrap sm:flex-nowrap sm:shrink-0 justify-center items-center gap-1">
+				{/* Desktop: separate icon buttons. */}
+				<div className="hidden sm:flex shrink-0 items-center gap-1">
 					<IconButton icon="tabler:qrcode" label={t.header.connect} onClick={() => openDialog({ kind: "qr" })} />
 					<IconButton
 						icon="tabler:clipboard-text"
@@ -77,6 +99,23 @@ export default (): JSX.Element => {
 					<div className="ml-1">
 						<ThemeSwitcher />
 					</div>
+				</div>
+
+				{/* Phones: one full-width button group (no keyboard shortcuts) and a full-width theme switcher. */}
+				<div className="sm:hidden flex flex-col gap-2 w-full">
+					<div className="join w-full">
+						<MobileGroupButton icon="tabler:qrcode" label={t.header.connect} onClick={() => openDialog({ kind: "qr" })} />
+						<MobileGroupButton
+							icon="tabler:clipboard-text"
+							label={t.header.clipboard}
+							onClick={() => openDialog({ kind: "clipboard" })}
+							dot={hasClipboard}
+						/>
+						<MobileGroupButton icon="tabler:brand-github" label={t.header.github} href={GITHUB_URL} />
+						<LanguageSwitcher className="join-item flex-1 flex" buttonClassName="btn-subtle w-full rounded-[inherit]" />
+					</div>
+
+					<ThemeSwitcher className="w-full" />
 				</div>
 			</div>
 

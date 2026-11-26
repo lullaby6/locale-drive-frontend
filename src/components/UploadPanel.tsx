@@ -111,7 +111,7 @@ export default (): JSX.Element | null => {
 	const percent = total > 0 ? Math.round((loaded / total) * 100) : 100;
 
 	return (
-		<div className="fixed bottom-4 left-4 right-4 sm:right-auto sm:w-96 z-30 rounded-box shadow-xl border border-subtle bg-base-100 overflow-hidden">
+		<div className="fixed bottom-[calc(var(--mobile-bar-height,4.5rem)+0.75rem)] sm:bottom-4 left-4 right-4 sm:right-auto sm:w-96 z-30 rounded-box shadow-xl border border-subtle bg-base-100 overflow-hidden">
 			<button
 				onClick={() => setCollapsed(value => !value)}
 				className="flex items-center justify-between gap-3 w-full px-4 py-3 bg-base-200 cursor-pointer"

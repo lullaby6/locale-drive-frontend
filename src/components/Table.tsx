@@ -138,6 +138,7 @@ function Row({ entry, searching }: { entry: Entry; searching: boolean }): JSX.El
 						label={isFolder ? t.common.downloadAsZip : t.common.download}
 						onClick={() => download([entry])}
 					/>
+					<ActionButton icon="tabler:folder-symlink" label={t.common.move} onClick={() => openDialog({ kind: "move", paths: [entry.path] })} />
 					<ActionButton icon="tabler:copy" label={t.common.duplicate} onClick={() => openDialog({ kind: "duplicate", entry })} />
 					<ActionButton icon="tabler:pencil" label={t.common.rename} onClick={() => openDialog({ kind: "rename", entry })} />
 					<ActionButton

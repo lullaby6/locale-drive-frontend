@@ -93,6 +93,11 @@ function SelectionActions(): JSX.Element {
 				{singleFile ? t.common.download : t.common.downloadZip}
 			</button>
 
+			<button onClick={() => openDialog({ kind: "move", paths: selected })} disabled={loading} className="btn btn-subtle btn-sm">
+				<Icon icon="tabler:folder-symlink" width="1em" height="1em" className="text-lg" />
+				{t.common.move}
+			</button>
+
 			<button
 				onClick={() => openDialog({ kind: "delete", paths: selected })}
 				disabled={loading}
@@ -114,7 +119,7 @@ export default (): JSX.Element => {
 	const fetching = useGlobalStore(state => state.fetching);
 
 	return (
-		<div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2 min-h-14 px-4 py-2 rounded-box border border-subtle bg-base-100">
+		<div className="flex flex-col justify-center md:flex-row md:justify-between md:items-center gap-2 min-h-14 px-4 py-2 rounded-box border border-subtle bg-base-100">
 			<div className="flex items-center gap-3 min-w-0">
 				<Breadcrumbs />
 
@@ -127,7 +132,12 @@ export default (): JSX.Element => {
 				{fetching && <span className="loading loading-spinner loading-xs text-primary" />}
 			</div>
 
-			{hasSelection && <SelectionActions />}
+			{/* Phones show these in the bottom bar instead (MobileActionBar), so the list doesn't jump. */}
+			{hasSelection && (
+				<div className="hidden sm:block">
+					<SelectionActions />
+				</div>
+			)}
 		</div>
 	);
 };

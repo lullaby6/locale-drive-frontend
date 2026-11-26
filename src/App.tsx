@@ -12,12 +12,14 @@ import Grid from "@/components/Grid";
 import EmptyState from "@/components/EmptyState";
 import PreviewModal from "@/components/PreviewModal";
 import UploadPanel from "@/components/UploadPanel";
+import MobileActionBar from "@/components/MobileActionBar";
 import DropOverlay from "@/components/DropOverlay";
 import Dialogs from "@/components/dialogs/Dialogs";
 import { ConnectionBanner, OfflineView } from "@/components/Connection";
 import { NotFoundView } from "@/components/NotFound";
 
 import useFileDrop from "@/hooks/useFileDrop";
+import useIsMobile from "@/hooks/useIsMobile";
 import useKeyboardShortcuts from "@/hooks/useKeyboardShortcuts";
 import useMarqueeSelection from "@/hooks/useMarqueeSelection";
 import useServerEvents from "@/hooks/useServerEvents";
@@ -37,6 +39,10 @@ export default () => {
 	const syncDirFromHash = useGlobalStore(state => state.syncDirFromHash);
 
 	const contentRef = useRef<HTMLDivElement>(null);
+
+	// Phones always use the grid: the list view's columns don't fit a narrow screen.
+	const isMobile = useIsMobile();
+	const layout = isMobile ? "grid" : view;
 
 	const dragging = useFileDrop();
 	const marquee = useMarqueeSelection(contentRef);
@@ -58,7 +64,8 @@ export default () => {
 	}, [syncDirFromHash]);
 
 	return (
-		<main className="flex flex-col gap-4 p-4 sm:p-6 lg:p-10 bg-base-300 min-h-screen">
+		// On phones the bottom padding follows the height of the bottom action bar (MobileActionBar).
+		<main className="flex flex-col gap-4 p-4 pb-[calc(var(--mobile-bar-height,5rem)+1rem)] sm:p-6 lg:p-10 bg-base-300 min-h-screen">
 			{loading && (
 				<div className="fixed inset-0 z-[60] flex justify-center items-center bg-black/30">
 					<span className="loading loading-spinner loading-lg text-primary"></span>
@@ -83,7 +90,7 @@ export default () => {
 					/>
 				) : entries.length === 0 ? (
 					<EmptyState />
-				) : view === "grid" ? (
+				) : layout === "grid" ? (
 					<Grid entries={entries} />
 				) : (
 					<Table entries={entries} />
@@ -100,6 +107,7 @@ export default () => {
 			<PreviewModal />
 			<Dialogs />
 			<UploadPanel />
+			<MobileActionBar />
 			{dragging && <DropOverlay />}
 
 			<Tooltip id="tooltip" place="top" delayShow={300} className="z-[70]" />

@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => {
       alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
     },
     server: {
-      port: parseInt(env.PORT || '5173'),
+      port: parseInt(env.PORT || '3000'),
       open: true,
       proxy: {
         '/api': { target: apiTarget, changeOrigin: true },

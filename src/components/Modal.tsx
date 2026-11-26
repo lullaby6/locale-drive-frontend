@@ -30,7 +30,7 @@ export default ({ title, icon, onClose, children, actions, className = "" }: Pro
 		<div className="modal modal-open modal-bottom sm:modal-middle" role="dialog" aria-modal="true" aria-label={title}>
 			<div className={`modal-box flex flex-col gap-4 border border-subtle ${className}`}>
 				<div className="flex justify-between items-center gap-3">
-					<h3 className="flex items-center gap-2 text-lg font-bold">
+					<h3 className="flex items-center gap-2 min-w-0 text-lg font-bold break-all">
 						{icon && <Icon icon={icon} width="1em" height="1em" className="text-primary" />}
 						{title}
 					</h3>

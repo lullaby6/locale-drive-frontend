@@ -20,7 +20,7 @@ function applyTheme(choice: ThemeChoice) {
 	document.documentElement.setAttribute("data-theme", theme);
 }
 
-export default (): JSX.Element => {
+export default ({ className = "" }: { className?: string }): JSX.Element => {
 	const t = useT();
 	const [theme, setTheme] = useState<ThemeChoice>(getSavedTheme);
 
@@ -43,11 +43,11 @@ export default (): JSX.Element => {
 	];
 
 	return (
-		<div className="join">
+		<div className={`join ${className}`}>
 			{options.map(option => (
 				<button
 					key={option.value}
-					className={`btn join-item px-2.5 ${theme === option.value ? "btn-primary" : "btn-subtle"}`}
+					className={`btn join-item px-2.5 flex-1 sm:flex-none ${theme === option.value ? "btn-primary" : "btn-subtle"}`}
 					onClick={() => setTheme(option.value)}
 					aria-label={option.label}
 					aria-pressed={theme === option.value}

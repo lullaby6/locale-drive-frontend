@@ -4,6 +4,8 @@ import type { DragEvent } from "react";
 import { getT } from "@/i18n";
 import useGlobalStore from "@/store/global";
 
+import { isTouchDevice } from "@/hooks/useLongPress";
+
 import type { Entry } from "@/types";
 
 const INTERNAL_TYPE = "application/x-locale-drive";
@@ -42,7 +44,8 @@ function setCountDragImage(event: DragEvent, count: number) {
 /** Makes a file or folder draggable. Dragging a selected item drags the whole selection. */
 export function useDraggableEntry(entry: Entry) {
 	return {
-		draggable: true,
+		// On touch screens a long press selects instead (HTML drag & drop is unreliable there).
+		draggable: !isTouchDevice,
 		onDragStart: (event: DragEvent) => {
 			const { selected, setDragging } = useGlobalStore.getState();
 			const paths = selected.includes(entry.path) ? selected : [entry.path];
@@ -106,7 +109,8 @@ export function useFolderDropTarget(folderPath: string) {
 
 				draggedPaths = [];
 				useGlobalStore.getState().setDragging([]);
-				useGlobalStore.getState().moveEntries(paths, folderPath);
+				// Every move is confirmed, also when dragging (it shows from where to where).
+				useGlobalStore.getState().openDialog({ kind: "move", paths, destination: folderPath });
 			},
 		},
 	};

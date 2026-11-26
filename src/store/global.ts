@@ -40,8 +40,8 @@ function setHashDir(dir: string) {
 function getInitialView(): ViewMode {
 	const saved = localStorage.getItem(VIEW_STORAGE_KEY);
 	if (saved === "list" || saved === "grid") return saved;
-	// Phones and small tablets get the grid by default, desktops the list.
-	return window.matchMedia("(max-width: 767px)").matches ? "grid" : "list";
+	// Desktop default. Phones always show the grid regardless (see App.tsx).
+	return "list";
 }
 
 interface GlobalState {
@@ -82,6 +82,8 @@ interface GlobalState {
 
 	preview: Entry | null;
 	dialog: Dialog | null;
+	/** Mobile only: the search field is hidden until the search button in the bottom bar is pressed. */
+	searchOpen: boolean;
 	/** Paths being dragged inside the app (to dim them and validate drop targets). */
 	dragging: string[];
 
@@ -109,6 +111,7 @@ interface GlobalState {
 	openEntry: (entry: Entry) => void;
 	setPreview: (entry: Entry | null) => void;
 	openDialog: (dialog: Dialog) => void;
+	setSearchOpen: (open: boolean) => void;
 	setDragging: (paths: string[]) => void;
 	closeDialog: () => void;
 
@@ -184,6 +187,7 @@ const useGlobalStore = create<GlobalState>((set, get) => {
 
 		preview: null,
 		dialog: null,
+		searchOpen: false,
 		dragging: [],
 
 		init: async () => {
@@ -352,6 +356,12 @@ const useGlobalStore = create<GlobalState>((set, get) => {
 		setPreview: entry => set({ preview: entry }),
 
 		openDialog: dialog => set({ dialog }),
+
+		setSearchOpen: open => {
+			set({ searchOpen: open });
+			// Closing the search also clears it, so the list goes back to the folder.
+			if (!open && get().query) get().setQuery("");
+		},
 
 		setDragging: paths => set({ dragging: paths }),
 

@@ -55,6 +55,10 @@ export type Dialog =
 	| { kind: "rename"; entry: Entry }
 	| { kind: "delete"; paths: string[] }
 	| { kind: "duplicate"; entry: Entry }
+	/** Without `destination` the user picks a folder first; with it (drag & drop) it goes straight to confirming. */
+	| { kind: "move"; paths: string[]; destination?: string }
+	/** Phones: the "⋮" actions as a bottom sheet instead of a dropdown. */
+	| { kind: "entryActions"; entry: Entry }
 	| { kind: "qr" }
 	| { kind: "shortcuts" }
 	| { kind: "clipboard" };

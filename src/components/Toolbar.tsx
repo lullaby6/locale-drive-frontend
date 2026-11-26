@@ -1,19 +1,19 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import type { ChangeEvent, JSX } from "react";
 
 import { Icon } from "@iconify/react";
 
+import SearchField from "@/components/SearchField";
+import useIsMobile from "@/hooks/useIsMobile";
 import { useT } from "@/i18n";
 import useGlobalStore from "@/store/global";
 
 import type { Translations } from "@/languages/en";
 import type { Order, SortBy } from "@/types";
 
-const SEARCH_DEBOUNCE = 400;
-
 type SortOption = keyof Translations["toolbar"]["sort"];
 
-const SORT_OPTIONS: SortOption[] = [
+export const SORT_OPTIONS: SortOption[] = [
 	"modificationDate:desc",
 	"modificationDate:asc",
 	"filename:asc",
@@ -78,36 +78,13 @@ function SortSelect(): JSX.Element {
 export default (): JSX.Element => {
 	const t = useT();
 	const loading = useGlobalStore(state => state.loading);
-	const query = useGlobalStore(state => state.query);
 	const view = useGlobalStore(state => state.view);
-	const setQuery = useGlobalStore(state => state.setQuery);
 	const refresh = useGlobalStore(state => state.refresh);
 	const uploadFiles = useGlobalStore(state => state.uploadFiles);
 	const openDialog = useGlobalStore(state => state.openDialog);
-
-	const [value, setValue] = useState(query);
+	const isMobile = useIsMobile();
 
 	const inputFilesRef = useRef<HTMLInputElement>(null);
-	const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-	// The store clears the query when changing folders; keep the input in sync.
-	useEffect(() => {
-		setValue(current => (current.trim() === query ? current : query));
-	}, [query]);
-
-	function handleSearch(event: ChangeEvent<HTMLInputElement>) {
-		const next = event.target.value;
-		setValue(next);
-
-		if (searchTimeout.current) clearTimeout(searchTimeout.current);
-		searchTimeout.current = setTimeout(() => setQuery(next.trim()), SEARCH_DEBOUNCE);
-	}
-
-	function clearQuery() {
-		if (searchTimeout.current) clearTimeout(searchTimeout.current);
-		setValue("");
-		setQuery("");
-	}
 
 	function openFilePicker() {
 		const input = inputFilesRef.current;
@@ -125,47 +102,23 @@ export default (): JSX.Element => {
 	}
 
 	return (
-		<div className="flex flex-col lg:flex-row justify-between items-center gap-3 p-4 rounded-box border border-subtle bg-base-100">
-			<input
-				ref={inputFilesRef}
-				onChange={handleInputFilesChange}
-				type="file"
-				name="files"
-				id="files"
-				multiple
-				className="hidden"
-			/>
+		<>
+		{/* Outside the card: the mobile bar and Shift+U open it even while the card is hidden. */}
+		<input
+			ref={inputFilesRef}
+			onChange={handleInputFilesChange}
+			type="file"
+			name="files"
+			id="files"
+			multiple
+			className="hidden"
+		/>
 
-			<label className="input w-full lg:w-1/3">
-				<Icon icon="tabler:search" width="1em" height="1em" className="opacity-50" />
-				<input
-					value={value}
-					onChange={handleSearch}
-					onKeyDown={event => {
-						if (event.key !== "Escape") return;
-						// First Esc clears the text, a second one leaves the field.
-						if (value === "") event.currentTarget.blur();
-						else clearQuery();
-					}}
-					id="search"
-					type="search"
-					className="grow"
-					placeholder={t.toolbar.searchPlaceholder}
-					spellCheck={false}
-					autoComplete="off"
-				/>
-				{value !== "" && (
-					<button
-						onClick={clearQuery}
-						className="cursor-pointer opacity-50 hover:opacity-100 transition-opacity"
-						aria-label={t.toolbar.clearSearch}
-					>
-						<Icon icon="tabler:x" className="text-xl" />
-					</button>
-				)}
-			</label>
+		{/* Desktop toolbar. On phones these actions (and the search field) live in MobileActionBar. */}
+		<div className="hidden sm:flex flex-col lg:flex-row justify-between items-center gap-3 p-4 rounded-box border border-subtle bg-base-100">
+			{!isMobile && <SearchField className="w-full lg:w-1/3" />}
 
-			<div className="flex flex-col sm:flex-row flex-wrap items-center justify-end gap-3 w-full lg:w-fit">
+			<div className="flex flex-row flex-wrap items-center justify-end gap-3 w-full lg:w-fit">
 				<div className="flex items-center gap-3 w-full sm:w-auto">
 					{view === "grid" && <SortSelect />}
 					<ViewToggle />
@@ -191,5 +144,6 @@ export default (): JSX.Element => {
 				</button>
 			</div>
 		</div>
+		</>
 	);
 };

@@ -7,6 +7,7 @@ import EntryIcon from "@/components/EntryIcon";
 import EntryMenu from "@/components/EntryMenu";
 import Thumbnail from "@/components/Thumbnail";
 import { useDraggableEntry, useFolderDropTarget } from "@/hooks/useEntryDrag";
+import useLongPress from "@/hooks/useLongPress";
 import { useT } from "@/i18n";
 import useGlobalStore from "@/store/global";
 import { formatBytes, formatDate } from "@/utils/utils";
@@ -25,7 +26,8 @@ function SelectBox({ entry, selected, visible }: { entry: Entry; selected: boole
 			onChange={() => toggleSelected(entry.path)}
 			onClick={event => event.stopPropagation()}
 			label={t.entries.select(entry.name)}
-			className={`transition-opacity ${visible || selected ? "opacity-100" : "opacity-0 group-hover:opacity-100 focus:opacity-100"}`}
+			// Phones have no hover: the box only takes space once selecting started (long press).
+			className={`transition-opacity ${visible || selected ? "opacity-100" : "max-sm:hidden opacity-0 group-hover:opacity-100 focus:opacity-100"}`}
 		/>
 	);
 }
@@ -49,12 +51,17 @@ function useCardState(entry: Entry) {
 	const clickSelect = useGlobalStore(state => state.clickSelect);
 	const hasCursor = useGlobalStore(state => state.cursorVisible && state.cursor === entry.path);
 
-	return { selected, isDragged, openEntry, clickSelect, hasCursor };
+	// Touch and hold selects (and starts selection mode), like Google Drive on phones.
+	const longPress = useLongPress(() => {
+		if (!useGlobalStore.getState().selected.includes(entry.path)) useGlobalStore.getState().toggleSelected(entry.path);
+	});
+
+	return { selected, isDragged, openEntry, clickSelect, hasCursor, longPress };
 }
 
 function FolderCard({ entry, selecting }: { entry: Entry; selecting: boolean }): JSX.Element {
 	const t = useT();
-	const { selected, isDragged, openEntry, clickSelect, hasCursor } = useCardState(entry);
+	const { selected, isDragged, openEntry, clickSelect, hasCursor, longPress } = useCardState(entry);
 	const dragProps = useDraggableEntry(entry);
 	const { isOver, dropProps } = useFolderDropTarget(entry.path);
 
@@ -63,6 +70,7 @@ function FolderCard({ entry, selecting }: { entry: Entry; selecting: boolean }):
 			data-entry-path={entry.path}
 			{...dragProps}
 			{...dropProps}
+			{...longPress}
 			onClick={event => (selecting || event.shiftKey ? clickSelect(entry.path, event) : openEntry(entry))}
 			className={`${cardClasses(selected, isOver, isDragged, hasCursor)} flex items-center gap-2 py-2 pl-3 pr-1`}
 			title={entry.name}
@@ -81,13 +89,14 @@ function FolderCard({ entry, selecting }: { entry: Entry; selecting: boolean }):
 }
 
 function FileCard({ entry, selecting, searching }: { entry: Entry; selecting: boolean; searching: boolean }): JSX.Element {
-	const { selected, isDragged, openEntry, clickSelect, hasCursor } = useCardState(entry);
+	const { selected, isDragged, openEntry, clickSelect, hasCursor, longPress } = useCardState(entry);
 	const dragProps = useDraggableEntry(entry);
 
 	return (
 		<div
 			data-entry-path={entry.path}
 			{...dragProps}
+			{...longPress}
 			onClick={event => (selecting || event.shiftKey ? clickSelect(entry.path, event) : openEntry(entry))}
 			className={`${cardClasses(selected, false, isDragged, hasCursor)} flex flex-col p-2 gap-2`}
 			title={entry.name}

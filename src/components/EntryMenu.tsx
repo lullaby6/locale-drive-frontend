@@ -2,6 +2,7 @@ import type { JSX } from "react";
 
 import { Icon } from "@iconify/react";
 
+import useIsMobile from "@/hooks/useIsMobile";
 import { useT } from "@/i18n";
 import { getFileUrl } from "@/services/files";
 import useGlobalStore from "@/store/global";
@@ -25,6 +26,23 @@ export default ({ entry, className = "" }: Props): JSX.Element => {
 	const openDialog = useGlobalStore(state => state.openDialog);
 
 	const isFolder = entry.type === "folder";
+	const isMobile = useIsMobile();
+
+	// Phones get a bottom sheet: a dropdown would run off the screen on the left column.
+	if (isMobile) {
+		return (
+			<button
+				onClick={event => {
+					event.stopPropagation();
+					openDialog({ kind: "entryActions", entry });
+				}}
+				className={`btn btn-ghost btn-circle btn-sm opacity-60 ${className}`}
+				aria-label={t.entries.moreActions(entry.name)}
+			>
+				<Icon icon="tabler:dots-vertical" width="1em" height="1em" className="text-lg" />
+			</button>
+		);
+	}
 
 	function run(action: () => void) {
 		return () => {
@@ -63,6 +81,12 @@ export default ({ entry, className = "" }: Props): JSX.Element => {
 					<button onClick={run(() => download([entry]))}>
 						<Icon icon={isFolder ? "tabler:file-zip" : "tabler:download"} width="1em" height="1em" />
 						{isFolder ? t.common.downloadAsZip : t.common.download}
+					</button>
+				</li>
+				<li>
+					<button onClick={run(() => openDialog({ kind: "move", paths: [entry.path] }))}>
+						<Icon icon="tabler:folder-symlink" width="1em" height="1em" />
+						{t.common.move}
 					</button>
 				</li>
 				<li>

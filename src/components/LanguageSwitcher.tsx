@@ -6,7 +6,13 @@ import { LANGUAGES, useI18n } from "@/i18n";
 
 import type { Language } from "@/i18n";
 
-export default (): JSX.Element => {
+interface Props {
+	/** Extra classes for the dropdown root and its button (e.g. to sit inside a join on mobile). */
+	className?: string;
+	buttonClassName?: string;
+}
+
+export default ({ className = "", buttonClassName = "btn-ghost px-2.5" }: Props): JSX.Element => {
 	const language = useI18n(state => state.language);
 	const t = useI18n(state => state.t);
 	const setLanguage = useI18n(state => state.setLanguage);
@@ -17,11 +23,11 @@ export default (): JSX.Element => {
 	}
 
 	return (
-		<div className="dropdown dropdown-end">
+		<div className={`dropdown dropdown-end ${className}`}>
 			<div
 				tabIndex={0}
 				role="button"
-				className="btn btn-ghost px-2.5 gap-1.5"
+				className={`btn gap-1.5 ${buttonClassName}`}
 				aria-label={t.header.language}
 				data-tooltip-id="tooltip"
 				data-tooltip-content={t.header.language}

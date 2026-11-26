@@ -96,6 +96,32 @@
     }
 }
 
+/*
+ * Subtler focus ring for text fields: daisyUI's ring (outside the field, with a small gap) is
+ * kept, but at 1px and in the same color as the field's border instead of a thick bright one.
+ * Error fields keep their red color (their --input-color is red).
+ */
+:is(.input, .select, .textarea):not(.input-error, .select-error, .textarea-error):is(:focus, :focus-within) {
+    /* daisyUI switches this to the solid text color on focus; keep the resting border color. */
+    --input-color: color-mix(in oklab, var(--color-base-content) 20%, #0000);
+}
+
+:is(.input, .select, .textarea):is(:focus, :focus-within) {
+    outline: 1px solid var(--input-color);
+    outline-offset: 2px;
+}
+
+/* Phones: keep toasts above the bottom action bar. */
+@media (max-width: 639px) {
+    /* Doubled class to beat react-toastify's own small-screen rule (bottom: 0). */
+    .Toastify__toast-container.Toastify__toast-container--bottom-right,
+    .Toastify__toast-container.Toastify__toast-container--bottom-center,
+    .Toastify__toast-container.Toastify__toast-container--bottom-left {
+        /* Set by MobileActionBar; already includes the safe area. */
+        bottom: calc(var(--mobile-bar-height, 4.75rem) + 0.5rem);
+    }
+}
+
 .table :where(thead tr, tbody tr:not(:last-child)) {
     border-color: color-mix(in oklch, var(--color-base-content) 7%, transparent);
 }

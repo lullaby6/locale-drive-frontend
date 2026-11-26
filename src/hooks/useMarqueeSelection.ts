@@ -34,6 +34,11 @@ export default function useMarqueeSelection(containerRef: RefObject<HTMLElement 
 		let base: string[] = [];
 		let additive = false;
 		let active = false;
+		let lastPointerType = "mouse";
+
+		function onPointerDown(event: PointerEvent) {
+			lastPointerType = event.pointerType;
+		}
 
 		function update() {
 			if (!start) return;
@@ -125,6 +130,9 @@ export default function useMarqueeSelection(containerRef: RefObject<HTMLElement 
 
 		function onMouseDown(event: MouseEvent) {
 			if (event.button !== 0) return;
+			// Browsers send fake mouse events after a tap. The box is a mouse feature: ignore them,
+			// or a tap that shifts the layout would land on empty space and clear the selection.
+			if (lastPointerType === "touch" || lastPointerType === "pen") return;
 			if ((event.target as HTMLElement).closest(IGNORE)) return;
 
 			start = { x: event.pageX, y: event.pageY };
@@ -139,9 +147,11 @@ export default function useMarqueeSelection(containerRef: RefObject<HTMLElement 
 			window.addEventListener("dragstart", blockNativeDrag, true);
 		}
 
+		window.addEventListener("pointerdown", onPointerDown, true);
 		container.addEventListener("mousedown", onMouseDown);
 
 		return () => {
+			window.removeEventListener("pointerdown", onPointerDown, true);
 			container.removeEventListener("mousedown", onMouseDown);
 			window.removeEventListener("mousemove", onMouseMove);
 			window.removeEventListener("mouseup", onMouseUp);

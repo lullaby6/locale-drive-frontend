@@ -15,6 +15,7 @@ const es: Translations = {
 		downloadAsZip: "Descargar como .zip",
 		rename: "Renombrar",
 		duplicate: "Duplicar",
+		move: "Mover",
 		delete: "Eliminar",
 		open: "Abrir",
 		preview: "Vista previa",
@@ -42,6 +43,8 @@ const es: Translations = {
 	},
 
 	toolbar: {
+		search: "Buscar",
+		actions: "Acciones",
 		searchPlaceholder: "Buscar en esta carpeta y subcarpetas...",
 		clearSearch: "Borrar búsqueda",
 		listLayout: "Vista de filas",
@@ -139,6 +142,16 @@ const es: Translations = {
 		duplicateTitle: "¿Duplicar?",
 		duplicateBody: (name: string) => `Se creará una copia de “${name}” en la misma carpeta.`,
 		duplicateFolderHint: "La carpeta se copia con todo su contenido.",
+		moveTitle: (label: string) => `Mover ${label}`,
+		moveHere: "Mover aquí",
+		moveNoFolders: "No hay carpetas aquí",
+		moveAlreadyHere: "Ya está en esta carpeta",
+		moveConfirmTitle: "Confirmar movimiento",
+		moveFrom: "Desde",
+		moveTo: "Hacia",
+		moveSeveralPlaces: "Varias ubicaciones",
+		moveAndMore: (count: number) => `y ${count} más`,
+		back: "Atrás",
 		validation: {
 			empty: "El nombre no puede estar vacío",
 			tooLong: "El nombre es demasiado largo",
